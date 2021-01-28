@@ -28,8 +28,9 @@ import com.tcs.trade.model.CandidateExcel;
 public class CandidateExcelController {
 
 	Workbook candidatesWorkBook;
-	FileInputStream excelFile;
-	private static final String path = "C:\\Users\\ALEJANDROBARRETOJIME\\Documents\\workspace-spring-tool-suite-4-4.9.0.RELEASE\\ApplicantTrackerServicesExcel\\src\\main\\resources\\CandidatesTracker.xlsx";
+	FileInputStream excelFile; 
+	ClassLoader classLoader;
+	private static final String path = "CandidatesTracker.xlsx";
 	private static final String sheetName = "Candidates";
 
 	@PostMapping("/registerCandidate")
@@ -38,7 +39,8 @@ public class CandidateExcelController {
 			if (candidate.getStatus() == null) {
 				candidate.setStatus("IE Pending");
 			}
-			excelFile = new FileInputStream(new File(path));
+			classLoader= getClass().getClassLoader();
+			excelFile = new FileInputStream(new File(classLoader.getResource(path).getFile()));
 			candidatesWorkBook = new XSSFWorkbook(excelFile);
 			Sheet worksheet = candidatesWorkBook.getSheet(sheetName);
 			int rowIndex = worksheet.getLastRowNum() + 1;
@@ -86,7 +88,8 @@ public class CandidateExcelController {
 	public ResponseEntity<Object> getCandidateInfoById(@PathVariable("email") String email) {
 		try {
 			CandidateExcel can = new CandidateExcel();
-			excelFile = new FileInputStream(new File(path));
+			classLoader= getClass().getClassLoader();
+			excelFile = new FileInputStream(new File(classLoader.getResource(path).getFile()));
 			candidatesWorkBook = new XSSFWorkbook(excelFile);
 			Sheet worksheet = candidatesWorkBook.getSheet(sheetName);
 			Iterator<Row> data = worksheet.iterator();
@@ -120,7 +123,8 @@ public class CandidateExcelController {
 	public ResponseEntity<Object> updateCandidate(@RequestBody CandidateExcel candidate,
 			@PathVariable("email") String email) {
 		try {
-			excelFile = new FileInputStream(new File(path));
+			classLoader= getClass().getClassLoader();
+			excelFile = new FileInputStream(new File(classLoader.getResource(path).getFile()));
 			candidatesWorkBook = new XSSFWorkbook(excelFile);
 			Sheet worksheet = candidatesWorkBook.getSheet(sheetName);
 			Iterator<Row> data = worksheet.iterator();
@@ -172,7 +176,8 @@ public class CandidateExcelController {
 		try {
 			CandidateExcel can;
 			List<CandidateExcel> candidates = new ArrayList<>();
-			excelFile = new FileInputStream(new File(path));
+			classLoader= getClass().getClassLoader();
+			excelFile = new FileInputStream(new File(classLoader.getResource(path).getFile()));
 			candidatesWorkBook = new XSSFWorkbook(excelFile);
 			Sheet worksheet = candidatesWorkBook.getSheet(sheetName);
 			Iterator<Row> data = worksheet.iterator();
