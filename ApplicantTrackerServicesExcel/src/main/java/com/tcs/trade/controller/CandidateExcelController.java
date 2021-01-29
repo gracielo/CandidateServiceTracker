@@ -187,6 +187,7 @@ public class CandidateExcelController {
 	public ResponseEntity<Object> getCandidates() {
 		try {
 			classLoader= this.getClass().getClassLoader();
+			System.err.println("el path es: ");
 			System.err.println(path);
 			System.err.println(classLoader.getResource(path).getPath());
 			File a = new File(classLoader.getResource(path).getFile());
