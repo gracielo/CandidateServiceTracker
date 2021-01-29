@@ -30,7 +30,7 @@ public class CandidateExcelController {
 	Workbook candidatesWorkBook;
 	FileInputStream excelFile; 
 	ClassLoader classLoader;
-	private static final String path = "files/CandidatesTracker.xlsx";
+	private static final String path = "app/src/main/resources/files/CandidatesTracker.xlsx";
 	private static final String sheetName = "Candidates";
 
 	@PostMapping("/registerCandidate")
