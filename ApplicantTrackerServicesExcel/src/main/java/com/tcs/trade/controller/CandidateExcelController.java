@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,7 +31,7 @@ public class CandidateExcelController {
 	Workbook candidatesWorkBook;
 	FileInputStream excelFile; 
 	ClassLoader classLoader;
-	private static final String path = "/app/src/main/resources/files/CandidatesTracker.xlsx";//"files/CandidatesTracker.xlsx";
+	private static final String path = "/app/src/main/resources/files/CandidatesTracker.xlsx";
 	private static final String sheetName = "Candidates";
 
 	@PostMapping("/registerCandidate")
@@ -40,8 +41,8 @@ public class CandidateExcelController {
 				candidate.setStatus("IE Pending");
 			}
 			classLoader= getClass().getClassLoader();
-			System.out.println(classLoader.getResource(path).getPath());
-			excelFile = new FileInputStream(new File(classLoader.getResource(path).getFile()));
+			//excelFile = new FileInputStream(new File(classLoader.getResource(path).getFile()));
+			excelFile =  new FileInputStream( new File(path));
 			candidatesWorkBook = new XSSFWorkbook(excelFile);
 			Sheet worksheet = candidatesWorkBook.getSheet(sheetName);
 			int rowIndex = worksheet.getLastRowNum() + 1;
@@ -73,7 +74,7 @@ public class CandidateExcelController {
 			cell = row.createCell(12);
 			cell.setCellValue(candidate.getAging());
 
-			FileOutputStream output = new FileOutputStream(classLoader.getSystemResource(path).getPath());
+			FileOutputStream output = new FileOutputStream(path);
 			candidatesWorkBook.write(output);
 			candidatesWorkBook.close();
 			return new ResponseEntity<>(candidate, HttpStatus.CREATED);
@@ -92,9 +93,9 @@ public class CandidateExcelController {
 	@GetMapping("/getCandidateInfoById/{email}")
 	public ResponseEntity<Object> getCandidateInfoById(@PathVariable("email") String email) {
 		try {
-			CandidateExcel can = new CandidateExcel();
+			CandidateExcel can = null;
 			classLoader= getClass().getClassLoader();
-			excelFile = new FileInputStream(new File(classLoader.getResource(path).getFile()));
+			excelFile = new FileInputStream(new File(path)); //new FileInputStream(new File(classLoader.getResource(path).getFile()));
 			candidatesWorkBook = new XSSFWorkbook(excelFile);
 			Sheet worksheet = candidatesWorkBook.getSheet(sheetName);
 			Iterator<Row> data = worksheet.iterator();
@@ -102,6 +103,7 @@ public class CandidateExcelController {
 				Row currentRow = data.next();
 				String aux = currentRow.getCell(1).getStringCellValue();
 				if (aux.compareToIgnoreCase(email) == 0) {
+					can = new CandidateExcel();
 					can.setName(currentRow.getCell(0).getStringCellValue());
 					can.setEmail(currentRow.getCell(1).getStringCellValue());
 					can.setPhone((int) currentRow.getCell(2).getNumericCellValue());
@@ -115,10 +117,11 @@ public class CandidateExcelController {
 					can.setFeedback(currentRow.getCell(10).getStringCellValue());
 					can.setSkills(currentRow.getCell(11).getStringCellValue());
 					can.setAging((int) currentRow.getCell(12).getNumericCellValue());
+					candidatesWorkBook.close();
+					return new ResponseEntity<>(can, HttpStatus.OK);
 				}
 			}
-			candidatesWorkBook.close();
-			return new ResponseEntity<>(can, HttpStatus.OK);
+			return new ResponseEntity<>("Candidate NOT FOUNDED", HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -131,7 +134,7 @@ public class CandidateExcelController {
 			@PathVariable("email") String email) {
 		try {
 			classLoader= getClass().getClassLoader();
-			excelFile = new FileInputStream(new File(classLoader.getResource(path).getFile()));
+			excelFile = new FileInputStream(new File(path));
 			candidatesWorkBook = new XSSFWorkbook(excelFile);
 			Sheet worksheet = candidatesWorkBook.getSheet(sheetName);
 			Iterator<Row> data = worksheet.iterator();
@@ -173,7 +176,7 @@ public class CandidateExcelController {
 				}
 
 			}
-			FileOutputStream output = new FileOutputStream(classLoader.getSystemResource(path).getPath());
+			FileOutputStream output = new FileOutputStream(path);
 			candidatesWorkBook.write(output);
 			candidatesWorkBook.close();
 			return new ResponseEntity<>(candidate, HttpStatus.OK);
@@ -187,8 +190,6 @@ public class CandidateExcelController {
 	public ResponseEntity<Object> getCandidates() {
 		try {
 			classLoader= this.getClass().getClassLoader();
-			System.err.println("el path es: ");
-			System.err.println(path);
 			File a = new File(path);//(classLoader.getResource(path).getFile());
 			excelFile = new FileInputStream(a);
 			CandidateExcel can;
@@ -226,15 +227,96 @@ public class CandidateExcelController {
 
 	}
 	
-	@GetMapping("/createFile")
-	private void createFile() {
+	@PostMapping("/registerEvaluation/{email}")
+	public ResponseEntity<Object> registerEvaluation(@RequestBody CandidateExcel candidate,@PathVariable("email") String email) {
 		try {
-		classLoader= this.getClass().getClassLoader();
-		File archivo = new File("app/src/main/resources/files/prueba.txt");
-		archivo.createNewFile();
-		}catch(Exception e) {
-			e.printStackTrace();
+			excelFile =  new FileInputStream( new File(path));
+			candidatesWorkBook = new XSSFWorkbook(excelFile);
+			Sheet worksheet = candidatesWorkBook.getSheet(sheetName);
+			Iterator<Row> data = worksheet.iterator();
+			CandidateExcel existenteCandidate = null;
+			int rowNumber = 0;
+			while (data.hasNext()) {
+				Row currentRow = data.next();
+				String aux = currentRow.getCell(1).getStringCellValue();
+				if (aux.compareToIgnoreCase(email) == 0) {
+					rowNumber = currentRow.getRowNum();
+					existenteCandidate = new CandidateExcel();
+					existenteCandidate.setName(currentRow.getCell(0).getStringCellValue());
+					existenteCandidate.setEmail(currentRow.getCell(1).getStringCellValue());
+					existenteCandidate.setPhone((int) currentRow.getCell(2).getNumericCellValue());
+					existenteCandidate.setProfile(currentRow.getCell(3).getStringCellValue());
+					existenteCandidate.setYearsOfExperience((int) currentRow.getCell(4).getNumericCellValue());
+					existenteCandidate.setEnglishLevel(currentRow.getCell(5).getStringCellValue());
+					existenteCandidate.setStatus(currentRow.getCell(6).getStringCellValue());
+					existenteCandidate.setCreationDate(new Date(currentRow.getCell(7).getStringCellValue()));
+					existenteCandidate.setGrade((int) currentRow.getCell(8).getNumericCellValue());
+					existenteCandidate.setEvaluator(currentRow.getCell(9).getStringCellValue());
+					existenteCandidate.setFeedback(currentRow.getCell(10).getStringCellValue());
+					existenteCandidate.setSkills(currentRow.getCell(11).getStringCellValue());
+					existenteCandidate.setAging((int) currentRow.getCell(12).getNumericCellValue());
+				}
+			}
+			
+			if (existenteCandidate != null) {				
+				
+					Row row = worksheet.getRow(rowNumber);
+					Cell cell = row.createCell(5);
+					cell.setCellValue(candidate.getEnglishLevel()!=null?candidate.getEnglishLevel():existenteCandidate.getEnglishLevel());
+					cell = row.getCell(6);
+					cell.setCellValue(candidate.getStatus());
+					cell = row.createCell(8);
+					cell.setCellValue(candidate.getGrade());
+					cell = row.createCell(10);
+					cell.setCellValue(candidate.getFeedback());
+					cell = row.createCell(11);
+					cell.setCellValue(candidate.getSkills()!=null?candidate.getSkills():existenteCandidate.getSkills());
+					cell = row.createCell(12);
+					cell.setCellValue(candidate.getAging() != 0 ?candidate.getAging():existenteCandidate.getAging());
+				
+				
+
+				FileOutputStream output = new FileOutputStream(path);
+				candidatesWorkBook.write(output);
+				candidatesWorkBook.close();
+			}else {
+				return new ResponseEntity<>("Candidate doesn't exists", HttpStatus.NOT_FOUND);
+			}
+			
+			return new ResponseEntity<>(candidate, HttpStatus.CREATED);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	
+	@DeleteMapping("/deleteCandidate/{email}")
+	private ResponseEntity<Object> deleteCandidate(@PathVariable("email") String email){
+		try {
+			classLoader= getClass().getClassLoader();
+			excelFile = new FileInputStream(new File(path)); 
+			candidatesWorkBook = new XSSFWorkbook(excelFile);
+			Sheet worksheet = candidatesWorkBook.getSheet(sheetName);
+			Iterator<Row> data = worksheet.iterator();
+			ArrayList<Integer> rowsNumbers = new ArrayList<>();
+			while (data.hasNext()) {
+				Row currentRow = data.next();
+				String aux = currentRow.getCell(1).getStringCellValue();
+				if (aux.compareToIgnoreCase(email) == 0) {
+					rowsNumbers.add(currentRow.getRowNum());			
+				}
+			}
+			for (Integer integer : rowsNumbers) {
+				worksheet.removeRow(worksheet.getRow(integer));
+			}
+			
+			FileOutputStream output = new FileOutputStream(path);
+			candidatesWorkBook.write(output);
+			candidatesWorkBook.close();
+			return new ResponseEntity<>("Candidate Eliminated", HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}		
+	
 }
