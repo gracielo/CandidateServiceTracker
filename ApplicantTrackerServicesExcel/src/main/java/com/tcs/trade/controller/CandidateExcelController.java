@@ -224,7 +224,7 @@ public class CandidateExcelController {
 
 	}
 	
-	@GetMapping("createFile")
+	@GetMapping("/createFile")
 	private void createFile() {
 		try {
 		classLoader= this.getClass().getClassLoader();
