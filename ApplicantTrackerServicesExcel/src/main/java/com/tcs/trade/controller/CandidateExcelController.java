@@ -223,5 +223,15 @@ public class CandidateExcelController {
 		}
 
 	}
+	
+	@GetMapping("createFile")
+	private void createFile() {
+		try {
+		classLoader= this.getClass().getClassLoader();
+		File archivo = new File(classLoader.getResource(path).getPath()+"/prueba.txt");
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 }
