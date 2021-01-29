@@ -187,7 +187,8 @@ public class CandidateExcelController {
 	public ResponseEntity<Object> getCandidates() {
 		try {
 			classLoader= this.getClass().getClassLoader();
-			File b = new File(path);
+			System.err.println(path);
+			System.err.println(classLoader.getResource(path).getPath());
 			File a = new File(classLoader.getResource(path).getFile());
 			excelFile = new FileInputStream(a);
 			CandidateExcel can;
