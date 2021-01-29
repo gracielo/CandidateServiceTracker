@@ -30,7 +30,7 @@ public class CandidateExcelController {
 	Workbook candidatesWorkBook;
 	FileInputStream excelFile; 
 	ClassLoader classLoader;
-	private static final String path = "file:/app/target/ApplicantTrackerServicesExcel-0.0.1-SNAPSHOT.jar!/BOOT-INF/classes!/files/CandidatesTracker.xlsx";
+	private static final String path = "files/CandidatesTracker.xlsx";
 	private static final String sheetName = "Candidates";
 
 	@PostMapping("/registerCandidate")
@@ -174,10 +174,10 @@ public class CandidateExcelController {
 	@GetMapping("/getCandidates")
 	public ResponseEntity<Object> getCandidates() {
 		try {
-			CandidateExcel can;
-			List<CandidateExcel> candidates = new ArrayList<>();
 			classLoader= this.getClass().getClassLoader();
 			excelFile = new FileInputStream(new File(classLoader.getResource(path).getFile()));
+			CandidateExcel can;
+			List<CandidateExcel> candidates = new ArrayList<>();
 			candidatesWorkBook = new XSSFWorkbook(excelFile);
 			Sheet worksheet = candidatesWorkBook.getSheet(sheetName);
 			Iterator<Row> data = worksheet.iterator();
