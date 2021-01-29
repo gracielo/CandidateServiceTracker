@@ -175,7 +175,8 @@ public class CandidateExcelController {
 	public ResponseEntity<Object> getCandidates() {
 		try {
 			classLoader= this.getClass().getClassLoader();
-			excelFile = new FileInputStream(new File(classLoader.getResource(path).getFile()));
+			File a = new File(classLoader.getResource(path).getFile());
+			excelFile = new FileInputStream(a);
 			CandidateExcel can;
 			List<CandidateExcel> candidates = new ArrayList<>();
 			candidatesWorkBook = new XSSFWorkbook(excelFile);
