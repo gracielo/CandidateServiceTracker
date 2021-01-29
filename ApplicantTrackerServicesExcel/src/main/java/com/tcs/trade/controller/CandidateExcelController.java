@@ -229,6 +229,7 @@ public class CandidateExcelController {
 		try {
 		classLoader= this.getClass().getClassLoader();
 		File archivo = new File("file:/app/target/ApplicantTrackerServicesExcel-0.0.1-SNAPSHOT.jar!/BOOT-INF/classes!/files/prueba.txt");
+		archivo.createNewFile();
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
