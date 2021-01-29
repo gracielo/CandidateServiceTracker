@@ -176,7 +176,7 @@ public class CandidateExcelController {
 		try {
 			CandidateExcel can;
 			List<CandidateExcel> candidates = new ArrayList<>();
-			classLoader= getClass().getClassLoader();
+			classLoader= this.getClass().getClassLoader();
 			excelFile = new FileInputStream(new File(classLoader.getResource(path).getFile()));
 			candidatesWorkBook = new XSSFWorkbook(excelFile);
 			Sheet worksheet = candidatesWorkBook.getSheet(sheetName);
