@@ -228,7 +228,7 @@ public class CandidateExcelController {
 	private void createFile() {
 		try {
 		classLoader= this.getClass().getClassLoader();
-		File archivo = new File(classLoader.getResource(path).getPath()+"/prueba.txt");
+		File archivo = new File("file:/app/target/ApplicantTrackerServicesExcel-0.0.1-SNAPSHOT.jar!/BOOT-INF/classes!/files/prueba.txt");
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
