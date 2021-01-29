@@ -15,6 +15,8 @@ public class CandidateExcel {
 	private int grade;
 	private String evaluator;
 	private String feedback;
+	private String skills;
+	private int aging;
 	
 	public String getName() {
 		return name;
@@ -81,6 +83,18 @@ public class CandidateExcel {
 	}
 	public void setFeedback(String feedback) {
 		this.feedback = feedback;
+	}
+	public String getSkills() {
+		return skills;
+	}
+	public void setSkills(String skills) {
+		this.skills = skills;
+	}
+	public int getAging() {
+		return aging;
+	}
+	public void setAging(int aging) {
+		this.aging = aging;
 	}
 	
 	

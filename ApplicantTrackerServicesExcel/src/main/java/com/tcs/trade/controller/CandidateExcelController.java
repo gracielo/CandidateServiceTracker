@@ -30,7 +30,7 @@ public class CandidateExcelController {
 	Workbook candidatesWorkBook;
 	FileInputStream excelFile; 
 	ClassLoader classLoader;
-	private static final String path = "app/src/main/resources/files/CandidatesTracker.xlsx";
+	private static final String path = "files/CandidatesTracker.xlsx";
 	private static final String sheetName = "Candidates";
 
 	@PostMapping("/registerCandidate")
@@ -40,6 +40,7 @@ public class CandidateExcelController {
 				candidate.setStatus("IE Pending");
 			}
 			classLoader= getClass().getClassLoader();
+			System.out.println(classLoader.getResource(path).getPath());
 			excelFile = new FileInputStream(new File(classLoader.getResource(path).getFile()));
 			candidatesWorkBook = new XSSFWorkbook(excelFile);
 			Sheet worksheet = candidatesWorkBook.getSheet(sheetName);
@@ -67,8 +68,12 @@ public class CandidateExcelController {
 			cell.setCellValue(candidate.getEvaluator());
 			cell = row.createCell(10);
 			cell.setCellValue(candidate.getFeedback());
+			cell = row.createCell(11);
+			cell.setCellValue(candidate.getSkills());
+			cell = row.createCell(12);
+			cell.setCellValue(candidate.getAging());
 
-			FileOutputStream output = new FileOutputStream(path);
+			FileOutputStream output = new FileOutputStream(classLoader.getSystemResource(path).getPath());
 			candidatesWorkBook.write(output);
 			candidatesWorkBook.close();
 			return new ResponseEntity<>(candidate, HttpStatus.CREATED);
@@ -108,6 +113,8 @@ public class CandidateExcelController {
 					can.setGrade((int) currentRow.getCell(8).getNumericCellValue());
 					can.setEvaluator(currentRow.getCell(9).getStringCellValue());
 					can.setFeedback(currentRow.getCell(10).getStringCellValue());
+					can.setSkills(currentRow.getCell(11).getStringCellValue());
+					can.setAging((int) currentRow.getCell(12).getNumericCellValue());
 				}
 			}
 			candidatesWorkBook.close();
@@ -158,10 +165,15 @@ public class CandidateExcelController {
 							candidate.getEvaluator() != null ? candidate.getEvaluator() : cell.getStringCellValue());
 					cell = row.getCell(10);
 					cell.setCellValue(candidate.getFeedback());
+					cell = row.getCell(11);
+					cell.setCellValue(candidate.getSkills());
+					cell = row.getCell(12);
+					cell.setCellValue(candidate.getAging() != 0 ? candidate.getAging()
+							: cell.getNumericCellValue());
 				}
 
 			}
-			FileOutputStream output = new FileOutputStream(path);
+			FileOutputStream output = new FileOutputStream(classLoader.getSystemResource(path).getPath());
 			candidatesWorkBook.write(output);
 			candidatesWorkBook.close();
 			return new ResponseEntity<>(candidate, HttpStatus.OK);
@@ -176,7 +188,7 @@ public class CandidateExcelController {
 		try {
 			classLoader= this.getClass().getClassLoader();
 			File a = new File(classLoader.getResource(path).getFile());
-			excelFile = new FileInputStream(new File(path));
+			excelFile = new FileInputStream(a);
 			CandidateExcel can;
 			List<CandidateExcel> candidates = new ArrayList<>();
 			candidatesWorkBook = new XSSFWorkbook(excelFile);
@@ -197,6 +209,8 @@ public class CandidateExcelController {
 				can.setGrade((int) currentRow.getCell(8).getNumericCellValue());
 				can.setEvaluator(currentRow.getCell(9).getStringCellValue());
 				can.setFeedback(currentRow.getCell(10).getStringCellValue());
+				can.setSkills(currentRow.getCell(11).getStringCellValue());
+				can.setAging((int) currentRow.getCell(12).getNumericCellValue());
 				candidates.add(can);
 			}
 			candidatesWorkBook.close();
