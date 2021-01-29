@@ -187,6 +187,7 @@ public class CandidateExcelController {
 	public ResponseEntity<Object> getCandidates() {
 		try {
 			classLoader= this.getClass().getClassLoader();
+			File b = new File(path);
 			File a = new File(classLoader.getResource(path).getFile());
 			excelFile = new FileInputStream(a);
 			CandidateExcel can;
@@ -228,7 +229,7 @@ public class CandidateExcelController {
 	private void createFile() {
 		try {
 		classLoader= this.getClass().getClassLoader();
-		File archivo = new File("file:/app/target/ApplicantTrackerServicesExcel-0.0.1-SNAPSHOT.jar!/BOOT-INF/classes!/files/prueba.txt");
+		File archivo = new File("app/src/main/resources/files/prueba.txt");
 		archivo.createNewFile();
 		}catch(Exception e) {
 			e.printStackTrace();
