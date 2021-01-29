@@ -189,8 +189,7 @@ public class CandidateExcelController {
 			classLoader= this.getClass().getClassLoader();
 			System.err.println("el path es: ");
 			System.err.println(path);
-			System.err.println(classLoader.getResource(path).getPath());
-			File a = new File(classLoader.getResource(path).getFile());
+			File a = new File(path);//(classLoader.getResource(path).getFile());
 			excelFile = new FileInputStream(a);
 			CandidateExcel can;
 			List<CandidateExcel> candidates = new ArrayList<>();
