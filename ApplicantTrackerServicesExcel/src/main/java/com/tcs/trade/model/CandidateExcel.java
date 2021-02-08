@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class CandidateExcel {
 		
+	private int candidateId;
 	private String name;
 	private String email;	
 	private int phone;	
@@ -12,11 +13,10 @@ public class CandidateExcel {
 	private String englishLevel;	
 	private String status;	
 	private Date creationDate;
-	private int grade;
-	private String evaluator;
-	private String feedback;
 	private String skills;
 	private int aging;
+	private String manager;
+	private boolean relocated;
 	
 	public String getName() {
 		return name;
@@ -66,24 +66,7 @@ public class CandidateExcel {
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 	}
-	public int getGrade() {
-		return grade;
-	}
-	public void setGrade(int grade) {
-		this.grade = grade;
-	}
-	public String getEvaluator() {
-		return evaluator;
-	}
-	public void setEvaluator(String evaluator) {
-		this.evaluator = evaluator;
-	}
-	public String getFeedback() {
-		return feedback;
-	}
-	public void setFeedback(String feedback) {
-		this.feedback = feedback;
-	}
+	
 	public String getSkills() {
 		return skills;
 	}
@@ -95,6 +78,24 @@ public class CandidateExcel {
 	}
 	public void setAging(int aging) {
 		this.aging = aging;
+	}
+	public int getCandidateId() {
+		return candidateId;
+	}
+	public void setCandidateId(int candidateId) {
+		this.candidateId = candidateId;
+	}
+	public String getManager() {
+		return manager;
+	}
+	public void setManager(String manager) {
+		this.manager = manager;
+	}
+	public boolean isRelocated() {
+		return relocated;
+	}
+	public void setRelocated(boolean relocated) {
+		this.relocated = relocated;
 	}
 	
 	
