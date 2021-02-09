@@ -33,8 +33,8 @@ public class CandidateExcelController {
 	FileInputStream excelFile;
 	ClassLoader classLoader;
 	//@Value("${excel.path}")
-	private String path= "/app/src/main/resources/files/CandidatesTracker.xlsx";
-	//private String path = "C:\\Users\\ALEJANDROBARRETOJIME\\git\\CandidateServiceTracker\\ApplicantTrackerServicesExcel\\src\\main\\resources\\files\\CandidatesTracker.xlsx";
+	//private String path= "/app/src/main/resources/files/CandidatesTracker.xlsx";
+	private String path = "C:\\Users\\ALEJANDROBARRETOJIME\\git\\CandidateServiceTracker\\ApplicantTrackerServicesExcel\\src\\main\\resources\\files\\CandidatesTracker.xlsx";
 	//@Value("${excel.sheetName}")
 	private String sheetName = "Candidates";
 	//@Value("${excel.sheetNameEvaluations}")
@@ -272,6 +272,12 @@ public class CandidateExcelController {
 			while (data.hasNext()) {
 				Row currentRow = data.next();
 				can = new CandidateExcel();
+				if (currentRow.getCell(0).getCellTypeEnum()==CellType.STRING) {
+					can.setCandidateId(Integer.parseInt(currentRow.getCell(0).getStringCellValue()));
+				}else if(currentRow.getCell(0).getCellTypeEnum()== CellType.NUMERIC) {
+					can.setCandidateId((int)currentRow.getCell(0).getNumericCellValue());
+				}
+				
 				can.setName(currentRow.getCell(1).getStringCellValue());
 				can.setEmail(currentRow.getCell(2).getStringCellValue());
 				can.setPhone((int) currentRow.getCell(3).getNumericCellValue());
