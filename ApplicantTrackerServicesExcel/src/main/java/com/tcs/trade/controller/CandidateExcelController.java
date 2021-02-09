@@ -34,12 +34,11 @@ public class CandidateExcelController {
 	ClassLoader classLoader;
 	//@Value("${excel.path}")
 	private String path= "/app/src/main/resources/files/CandidatesTracker.xlsx";
+	//private String path = "C:\\Users\\ALEJANDROBARRETOJIME\\git\\CandidateServiceTracker\\ApplicantTrackerServicesExcel\\src\\main\\resources\\files\\CandidatesTracker.xlsx";
 	//@Value("${excel.sheetName}")
 	private String sheetName = "Candidates";
 	//@Value("${excel.sheetNameEvaluations}")
 	private String sheetNameEvaluations = "Evaluations";
-	//@Value("${excel.sheetNameEvaluators}")
-	private String sheetNameEvaluators= "Evaluators";
 	//@Value("${excel.sheetNameManagers}")
 	private String sheetNameManagers= "Managers";
 
@@ -56,6 +55,7 @@ public class CandidateExcelController {
 			candidatesWorkBook = new XSSFWorkbook(excelFile);
 			Sheet worksheet = candidatesWorkBook.getSheet(sheetName);
 			int rowIndex = worksheet.getLastRowNum() + 1;
+			candidate.setCandidateId(rowIndex);
 			Row row = worksheet.createRow(rowIndex);
 			Cell cell = row.createCell(0);
 			cell.setCellValue(rowIndex);
@@ -83,6 +83,25 @@ public class CandidateExcelController {
 			cell.setCellValue(candidate.getManager());
 			cell = row.createCell(12);
 			cell.setCellValue(candidate.isRelocated());
+			
+			Sheet manager = candidatesWorkBook.getSheet(sheetNameManagers);
+			Iterator<Row> dataMan = manager.iterator();
+			dataMan.next();
+			while(dataMan.hasNext()) {
+				Row rowMan = dataMan.next();
+				if (rowMan.getCell(0).getCellTypeEnum()==CellType.STRING) {
+					String mani =rowMan.getCell(0).getStringCellValue();
+					if (mani.compareToIgnoreCase(candidate.getManager())==0) {
+						candidate.setManager(rowMan.getCell(1).getStringCellValue());
+					}
+				}else {
+					int mani = (int) rowMan.getCell(0).getNumericCellValue();
+					if(mani==Integer.parseInt(candidate.getManager())) {
+						candidate.setManager(rowMan.getCell(1).getStringCellValue());
+					}
+				}
+				
+			}
 
 			FileOutputStream output = new FileOutputStream(path);
 			candidatesWorkBook.write(output);
@@ -101,7 +120,7 @@ public class CandidateExcelController {
 	}
 
 	@GetMapping("/getCandidateInfoById/{id}")
-	public ResponseEntity<Object> getCandidateInfoById(@PathVariable("id") String id) {
+	public ResponseEntity<Object> getCandidateInfoById(@PathVariable("id") int id) {
 		try {
 			CandidateExcel can = null;
 			classLoader = getClass().getClassLoader();
@@ -109,12 +128,17 @@ public class CandidateExcelController {
 																// File(classLoader.getResource(path).getFile()));
 			candidatesWorkBook = new XSSFWorkbook(excelFile);
 			Sheet worksheet = candidatesWorkBook.getSheet(sheetName);
+			Sheet manager = candidatesWorkBook.getSheet(sheetNameManagers);
 			Iterator<Row> data = worksheet.iterator();
+			Iterator<Row> dataMan = manager.iterator();
+			data.next();
+			dataMan.next();
 			while (data.hasNext()) {
 				Row currentRow = data.next();
-				String aux = currentRow.getCell(0).getStringCellValue();
-				if (aux.compareToIgnoreCase(id) == 0) {
+				int aux = (int) currentRow.getCell(0).getNumericCellValue();
+				if (aux == id) {
 					can = new CandidateExcel();
+					can.setCandidateId(id);
 					can.setName(currentRow.getCell(1).getStringCellValue());
 					can.setEmail(currentRow.getCell(2).getStringCellValue());
 					can.setPhone((int) currentRow.getCell(3).getNumericCellValue());
@@ -125,12 +149,22 @@ public class CandidateExcelController {
 					can.setCreationDate(new Date(currentRow.getCell(8).getStringCellValue()));
 					can.setSkills(currentRow.getCell(9).getStringCellValue());
 					can.setAging((int) currentRow.getCell(10).getNumericCellValue());
-					can.setManager(currentRow.getCell(11).getStringCellValue());
-					if (currentRow.getCell(12).getStringCellValue().compareTo("true") == 0) {
-						can.setRelocated(true);
-					} else {
-						can.setRelocated(false);
+					
+					while(dataMan.hasNext()) {
+						Row rowMan = dataMan.next();
+						if (rowMan.getCell(0).getCellTypeEnum()==CellType.STRING) {
+							String mani =rowMan.getCell(0).getStringCellValue();
+							if (mani.compareToIgnoreCase(can.getManager())==0) {
+								can.setManager(rowMan.getCell(1).getStringCellValue());
+							}
+						}else {
+							int mani = (int) rowMan.getCell(0).getNumericCellValue();
+							if(mani== Integer.parseInt(currentRow.getCell(11).getStringCellValue() )) {
+								can.setManager(rowMan.getCell(1).getStringCellValue());
+							}
+						}
 					}
+					can.setRelocated(currentRow.getCell(12).getBooleanCellValue());
 
 					candidatesWorkBook.close();
 					return new ResponseEntity<>(can, HttpStatus.OK);
@@ -145,18 +179,19 @@ public class CandidateExcelController {
 
 	@PutMapping("/updateCandidate/{id}")
 	public ResponseEntity<Object> updateCandidate(@RequestBody CandidateExcel candidate,
-			@PathVariable("id") String id) {
+			@PathVariable("id") int id) {
 		try {
 			classLoader = getClass().getClassLoader();
 			excelFile = new FileInputStream(new File(path));
 			candidatesWorkBook = new XSSFWorkbook(excelFile);
 			Sheet worksheet = candidatesWorkBook.getSheet(sheetName);
 			Iterator<Row> data = worksheet.iterator();
+			data.next();
 			while (data.hasNext()) {
 				Row row = data.next();
 
-				String aux = row.getCell(0).getStringCellValue();
-				if (aux.compareToIgnoreCase(id) == 0) {
+				int aux = (int) row.getCell(0).getNumericCellValue();
+				if (aux == id) {
 					Cell cell = row.getCell(1);
 					cell.setCellValue(candidate.getName() != null ? candidate.getName() : cell.getStringCellValue());
 					cell = row.getCell(2);
@@ -190,6 +225,25 @@ public class CandidateExcelController {
 				}
 
 			}
+			
+			Sheet manager = candidatesWorkBook.getSheet(sheetNameManagers);
+			Iterator<Row> dataMan = manager.iterator();
+			dataMan.next();
+			while(dataMan.hasNext()) {
+				Row rowMan = dataMan.next();
+				if (rowMan.getCell(0).getCellTypeEnum()==CellType.STRING) {
+					String mani =rowMan.getCell(0).getStringCellValue();
+					if (mani.compareToIgnoreCase(candidate.getManager())==0) {
+						candidate.setManager(rowMan.getCell(1).getStringCellValue());
+					}
+				}else {
+					int mani = (int) rowMan.getCell(0).getNumericCellValue();
+					if(mani==Integer.parseInt(candidate.getManager())) {
+						candidate.setManager(rowMan.getCell(1).getStringCellValue());
+					}
+				}
+			}
+			
 			FileOutputStream output = new FileOutputStream(path);
 			candidatesWorkBook.write(output);
 			candidatesWorkBook.close();
@@ -203,7 +257,6 @@ public class CandidateExcelController {
 	@GetMapping("/getCandidates")
 	public ResponseEntity<Object> getCandidates() {
 		try {
-			System.err.println(sheetName);
 			classLoader = this.getClass().getClassLoader();
 			File a = new File(path);// (classLoader.getResource(path).getFile());
 			excelFile = new FileInputStream(a);
@@ -212,7 +265,10 @@ public class CandidateExcelController {
 			candidatesWorkBook = new XSSFWorkbook(excelFile);
 			Sheet worksheet = candidatesWorkBook.getSheet(sheetName);
 			Iterator<Row> data = worksheet.iterator();
+			Sheet manager = candidatesWorkBook.getSheet(sheetNameManagers);
+			Iterator<Row> dataMan = manager.iterator();
 			data.next();
+			dataMan.next();
 			while (data.hasNext()) {
 				Row currentRow = data.next();
 				can = new CandidateExcel();
@@ -226,12 +282,23 @@ public class CandidateExcelController {
 				can.setCreationDate(new Date(currentRow.getCell(8).getStringCellValue()));
 				can.setSkills(currentRow.getCell(9).getStringCellValue());
 				can.setAging((int) currentRow.getCell(10).getNumericCellValue());
-				can.setManager(currentRow.getCell(11).getStringCellValue());
-				if (currentRow.getCell(12).getStringCellValue().compareToIgnoreCase("true") == 0) {
-					can.setRelocated(true);
-				} else {
-					can.setRelocated(false);
+
+
+				while(dataMan.hasNext()) {
+					Row rowMan = dataMan.next();
+					if (rowMan.getCell(0).getCellTypeEnum()==CellType.STRING) {
+						String mani =rowMan.getCell(0).getStringCellValue();
+						if (mani.compareToIgnoreCase(can.getManager())==0) {
+							can.setManager(rowMan.getCell(1).getStringCellValue());
+						}
+					}else {
+						int mani = (int) rowMan.getCell(0).getNumericCellValue();
+						if(mani== Integer.parseInt(currentRow.getCell(11).getStringCellValue() )) {
+							can.setManager(rowMan.getCell(1).getStringCellValue());
+						}
+					}
 				}
+				can.setRelocated(currentRow.getCell(12).getBooleanCellValue());
 
 				candidates.add(can);
 			}
@@ -247,78 +314,8 @@ public class CandidateExcelController {
 
 	}
 
-	@PostMapping("/registerEvaluation/{id}")
-	public ResponseEntity<Object> registerEvaluation(@RequestBody Evaluation evaluation,
-			@PathVariable("id") String id) {
-		try {
-			excelFile = new FileInputStream(new File(path));
-			candidatesWorkBook = new XSSFWorkbook(excelFile);
-			Sheet worksheet = candidatesWorkBook.getSheet(sheetName);
-			Sheet worksheetEv = candidatesWorkBook.getSheet(sheetNameEvaluations);
-			Iterator<Row> data = worksheet.iterator();
-			CandidateExcel existenteCandidate = null;
-			int rowNumber = 0;
-			while (data.hasNext()) {
-				Row currentRow = data.next();
-				String aux = currentRow.getCell(0).getStringCellValue();
-				if (aux.compareToIgnoreCase(id) == 0) {
-					rowNumber = currentRow.getRowNum();
-					existenteCandidate = new CandidateExcel();
-					existenteCandidate.setCandidateId((int) currentRow.getCell(0).getNumericCellValue());
-					/*
-					 * existenteCandidate.setName(currentRow.getCell(0).getStringCellValue());
-					 * existenteCandidate.setEmail(currentRow.getCell(1).getStringCellValue());
-					 * existenteCandidate.setPhone((int)
-					 * currentRow.getCell(2).getNumericCellValue());
-					 * existenteCandidate.setProfile(currentRow.getCell(3).getStringCellValue());
-					 * existenteCandidate.setYearsOfExperience((int)
-					 * currentRow.getCell(4).getNumericCellValue());
-					 * existenteCandidate.setEnglishLevel(currentRow.getCell(5).getStringCellValue()
-					 * ); existenteCandidate.setStatus(currentRow.getCell(6).getStringCellValue());
-					 * existenteCandidate.setCreationDate(new
-					 * Date(currentRow.getCell(7).getStringCellValue()));
-					 * existenteCandidate.setGrade((int)
-					 * currentRow.getCell(8).getNumericCellValue());
-					 * existenteCandidate.setEvaluator(currentRow.getCell(9).getStringCellValue());
-					 * existenteCandidate.setFeedback(currentRow.getCell(10).getStringCellValue());
-					 * existenteCandidate.setSkills(currentRow.getCell(11).getStringCellValue());
-					 * existenteCandidate.setAging((int)
-					 * currentRow.getCell(12).getNumericCellValue());
-					 */
-				}
-			}
-
-			if (existenteCandidate != null) {
-				int idEv = worksheetEv.getLastRowNum() + 1;
-				Row row = worksheetEv.createRow(idEv);
-				Cell cell = row.createCell(0);
-				cell.setCellValue(idEv);
-				cell = row.createCell(1);
-				cell.setCellValue(id);
-				cell = row.createCell(2);
-				cell.setCellValue(evaluation.getEvaluatorId());
-				cell = row.createCell(3);
-				cell.setCellValue(evaluation.getFeedback());
-				cell = row.createCell(4);
-				cell.setCellValue(evaluation.getGrade());
-				cell = row.createCell(5);
-				cell.setCellValue(getSystemDate());
-
-				FileOutputStream output = new FileOutputStream(path);
-				candidatesWorkBook.write(output);
-				candidatesWorkBook.close();
-			} else {
-				return new ResponseEntity<>("Candidate doesn't exists", HttpStatus.NOT_FOUND);
-			}
-
-			return new ResponseEntity<>("Evaluation registered", HttpStatus.CREATED);
-		} catch (Exception e) {
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-
 	@DeleteMapping("/deleteCandidate/{id}")
-	private ResponseEntity<Object> deleteCandidate(@PathVariable("id") String id) {
+	private ResponseEntity<Object> deleteCandidate(@PathVariable("id") int id) {
 		try {
 			classLoader = getClass().getClassLoader();
 			excelFile = new FileInputStream(new File(path));
@@ -326,15 +323,15 @@ public class CandidateExcelController {
 			Sheet worksheet = candidatesWorkBook.getSheet(sheetName);
 			Iterator<Row> data = worksheet.iterator();
 			ArrayList<Integer> rowsNumbers = new ArrayList<>();
+			data.next();
+			int i=0;
 			while (data.hasNext()) {
 				Row currentRow = data.next();
-				String aux = currentRow.getCell(1).getStringCellValue();
-				if (aux.compareToIgnoreCase(id) == 0) {
-					rowsNumbers.add(currentRow.getRowNum());
+				int aux = (int)currentRow.getCell(1).getNumericCellValue();
+				if (aux== id) {
+					worksheet.removeRow(worksheet.getRow(i));
 				}
-			}
-			for (Integer integer : rowsNumbers) {
-				worksheet.removeRow(worksheet.getRow(integer));
+				i++;
 			}
 
 			FileOutputStream output = new FileOutputStream(path);

@@ -4,7 +4,7 @@ public class Evaluators {
 
 	private int evaluatorId;
 	private String name;
-	private String mail;
+	private String email;
 	private String position;
 
 	
@@ -20,11 +20,11 @@ public class Evaluators {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getMail() {
-		return mail;
+	public String getEmail() {
+		return email;
 	}
-	public void setMail(String mail) {
-		this.mail = mail;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	public String getPosition() {
 		return position;

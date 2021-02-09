@@ -30,6 +30,7 @@ public class EvaluatorsController {
 	Workbook candidatesWorkBook;
 	FileInputStream excelFile;
 	private String path= "/app/src/main/resources/files/CandidatesTracker.xlsx";
+	//private String path = "C:\\Users\\ALEJANDROBARRETOJIME\\git\\CandidateServiceTracker\\ApplicantTrackerServicesExcel\\src\\main\\resources\\files\\CandidatesTracker.xlsx";
 	private String sheetName = "Evaluators";
 	
 	@GetMapping("/getEvaluators")
@@ -46,7 +47,7 @@ public class EvaluatorsController {
 				Evaluators evaluator = new Evaluators();
 				evaluator.setEvaluatorId((int)currentRow.getCell(0).getNumericCellValue());
 				evaluator.setName(currentRow.getCell(1).getStringCellValue());
-				evaluator.setMail(currentRow.getCell(2).getStringCellValue());
+				evaluator.setEmail(currentRow.getCell(2).getStringCellValue());
 				evaluator.setPosition(currentRow.getCell(3).getStringCellValue());
 				evaluators.add(evaluator);
 			}
@@ -71,7 +72,7 @@ public class EvaluatorsController {
 					Evaluators ev = new Evaluators();
 					ev.setEvaluatorId(id);
 					ev.setName(currentRow.getCell(1).getStringCellValue());
-					ev.setMail(currentRow.getCell(2).getStringCellValue());
+					ev.setEmail(currentRow.getCell(2).getStringCellValue());
 					ev.setPosition(currentRow.getCell(3).getStringCellValue());
 					
 					return new ResponseEntity<>(ev,HttpStatus.OK);
@@ -91,13 +92,14 @@ public class EvaluatorsController {
 			candidatesWorkBook = new XSSFWorkbook(excelFile);
 			Sheet worksheet = candidatesWorkBook.getSheet(sheetName);
 			int evId = worksheet.getLastRowNum() + 1;
+			evaluator.setEvaluatorId(evId);
 			Row row = worksheet.createRow(evId);
 			Cell cell = row.createCell(0);
 			cell.setCellValue(evId);
 			cell = row.createCell(1);
 			cell.setCellValue(evaluator.getName());
 			cell = row.createCell(2);
-			cell.setCellValue(evaluator.getMail());
+			cell.setCellValue(evaluator.getEmail());
 			cell = row.createCell(3);
 			cell.setCellValue(evaluator.getPosition());
 			

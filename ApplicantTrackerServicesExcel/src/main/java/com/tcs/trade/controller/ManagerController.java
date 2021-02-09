@@ -30,6 +30,7 @@ public class ManagerController {
 	Workbook candidatesWorkBook;
 	FileInputStream excelFile;
 	private String path= "/app/src/main/resources/files/CandidatesTracker.xlsx";
+	//private String path = "C:\\Users\\ALEJANDROBARRETOJIME\\git\\CandidateServiceTracker\\ApplicantTrackerServicesExcel\\src\\main\\resources\\files\\CandidatesTracker.xlsx";
 	private String sheetName = "Managers";
 	
 	@GetMapping("/getManagers")
@@ -91,6 +92,7 @@ public class ManagerController {
 			candidatesWorkBook = new XSSFWorkbook(excelFile);
 			Sheet worksheet = candidatesWorkBook.getSheet(sheetName);
 			int evId = worksheet.getLastRowNum() + 1;
+			manager.setManagerId(evId);
 			Row row = worksheet.createRow(evId);
 			Cell cell = row.createCell(0);
 			cell.setCellValue(evId);

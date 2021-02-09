@@ -6,10 +6,11 @@ public class Evaluation {
 	
 	private int evaluationId;
 	private int candidateId;
-	private int evaluatorId;
+	private String evaluatorId;
 	private String feedback;
 	private int grade;
 	private Date evaluationDate;
+	private String status;
 	
 	
 	
@@ -25,10 +26,10 @@ public class Evaluation {
 	public void setCandidateId(int candidateId) {
 		this.candidateId = candidateId;
 	}
-	public int getEvaluatorId() {
+	public String getEvaluatorId() {
 		return evaluatorId;
 	}
-	public void setEvaluatorId(int evaluatorId) {
+	public void setEvaluatorId(String evaluatorId) {
 		this.evaluatorId = evaluatorId;
 	}
 	public String getFeedback() {
@@ -48,6 +49,12 @@ public class Evaluation {
 	}
 	public void setEvaluationDate(Date evaluationDate) {
 		this.evaluationDate = evaluationDate;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	
 	
