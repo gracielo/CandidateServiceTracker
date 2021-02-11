@@ -141,7 +141,7 @@ public class CandidateExcelController {
 					can.setCandidateId(id);
 					can.setName(currentRow.getCell(1).getStringCellValue());
 					can.setEmail(currentRow.getCell(2).getStringCellValue());
-					can.setPhone((int) currentRow.getCell(3).getNumericCellValue());
+					can.setPhone(currentRow.getCell(3).getStringCellValue());
 					can.setProfile(currentRow.getCell(4).getStringCellValue());
 					can.setYearsOfExperience((int) currentRow.getCell(5).getNumericCellValue());
 					can.setEnglishLevel(currentRow.getCell(6).getStringCellValue());
@@ -197,7 +197,7 @@ public class CandidateExcelController {
 					cell = row.getCell(2);
 					cell.setCellValue(candidate.getEmail() != null ? candidate.getEmail() : cell.getStringCellValue());
 					cell = row.getCell(3);
-					cell.setCellValue(candidate.getPhone() != 0 ? candidate.getPhone() : cell.getNumericCellValue());
+					cell.setCellValue(candidate.getPhone() != null ? candidate.getPhone() : cell.getStringCellValue());
 					cell = row.getCell(4);
 					cell.setCellValue(
 							candidate.getProfile() != null ? candidate.getProfile() : cell.getStringCellValue());
@@ -280,7 +280,7 @@ public class CandidateExcelController {
 				
 				can.setName(currentRow.getCell(1).getStringCellValue());
 				can.setEmail(currentRow.getCell(2).getStringCellValue());
-				can.setPhone((int) currentRow.getCell(3).getNumericCellValue());
+				can.setPhone(currentRow.getCell(3).getStringCellValue());
 				can.setProfile(currentRow.getCell(4).getStringCellValue());
 				can.setYearsOfExperience((int) currentRow.getCell(5).getNumericCellValue());
 				can.setEnglishLevel(currentRow.getCell(6).getStringCellValue());

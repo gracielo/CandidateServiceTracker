@@ -7,7 +7,7 @@ public class CandidateExcel {
 	private int candidateId;
 	private String name;
 	private String email;	
-	private int phone;	
+	private String phone;	
 	private String profile;		
 	private int yearsOfExperience;	
 	private String englishLevel;	
@@ -30,10 +30,10 @@ public class CandidateExcel {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public int getPhone() {
+	public String getPhone() {
 		return phone;
 	}
-	public void setPhone(int phone) {
+	public void setPhone(String phone) {
 		this.phone = phone;
 	}
 	public String getProfile() {
