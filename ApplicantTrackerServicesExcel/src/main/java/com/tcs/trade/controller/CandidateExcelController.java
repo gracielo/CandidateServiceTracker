@@ -33,8 +33,8 @@ public class CandidateExcelController {
 	FileInputStream excelFile;
 	ClassLoader classLoader;
 	//@Value("${excel.path}")
-	//private String path= "/app/src/main/resources/files/CandidatesTracker.xlsx";
-	private String path = "C:\\Users\\ALEJANDROBARRETOJIME\\git\\CandidateServiceTracker\\ApplicantTrackerServicesExcel\\src\\main\\resources\\files\\CandidatesTracker.xlsx";
+	private String path= "/app/src/main/resources/files/CandidatesTracker.xlsx";
+	//private String path = "C:\\Users\\ALEJANDROBARRETOJIME\\git\\CandidateServiceTracker\\ApplicantTrackerServicesExcel\\src\\main\\resources\\files\\CandidatesTracker.xlsx";
 	//@Value("${excel.sheetName}")
 	private String sheetName = "Candidates";
 	//@Value("${excel.sheetNameEvaluations}")
