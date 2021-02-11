@@ -33,8 +33,8 @@ public class CandidateExcelController {
 	FileInputStream excelFile;
 	ClassLoader classLoader;
 	//@Value("${excel.path}")
-	private String path= "/app/src/main/resources/files/CandidatesTracker.xlsx";
-	//private String path = "C:\\Users\\ALEJANDROBARRETOJIME\\git\\CandidateServiceTracker\\ApplicantTrackerServicesExcel\\src\\main\\resources\\files\\CandidatesTracker.xlsx";
+	//private String path= "/app/src/main/resources/files/CandidatesTracker.xlsx";
+	private String path = "C:\\Users\\ALEJANDROBARRETOJIME\\git\\CandidateServiceTracker\\ApplicantTrackerServicesExcel\\src\\main\\resources\\files\\CandidatesTracker.xlsx";
 	//@Value("${excel.sheetName}")
 	private String sheetName = "Candidates";
 	//@Value("${excel.sheetNameEvaluations}")
@@ -141,7 +141,11 @@ public class CandidateExcelController {
 					can.setCandidateId(id);
 					can.setName(currentRow.getCell(1).getStringCellValue());
 					can.setEmail(currentRow.getCell(2).getStringCellValue());
-					can.setPhone(currentRow.getCell(3).getStringCellValue());
+					if (currentRow.getCell(3).getCellTypeEnum() == CellType.NUMERIC) {
+						can.setPhone(currentRow.getCell(3).getNumericCellValue()+"");
+					}else if(currentRow.getCell(3).getCellTypeEnum() == CellType.STRING) {
+						can.setPhone(currentRow.getCell(3).getStringCellValue());
+					}					
 					can.setProfile(currentRow.getCell(4).getStringCellValue());
 					can.setYearsOfExperience((int) currentRow.getCell(5).getNumericCellValue());
 					can.setEnglishLevel(currentRow.getCell(6).getStringCellValue());
@@ -197,7 +201,13 @@ public class CandidateExcelController {
 					cell = row.getCell(2);
 					cell.setCellValue(candidate.getEmail() != null ? candidate.getEmail() : cell.getStringCellValue());
 					cell = row.getCell(3);
-					cell.setCellValue(candidate.getPhone() != null ? candidate.getPhone() : cell.getStringCellValue());
+					if (cell.getCellTypeEnum() == CellType.NUMERIC) {
+						cell.setCellValue(candidate.getPhone() != null ? candidate.getPhone() : (cell.getNumericCellValue()+""));
+					}else if(cell.getCellTypeEnum() == CellType.STRING) {
+						cell.setCellValue(candidate.getPhone() != null ? candidate.getPhone() : cell.getStringCellValue());
+					}
+					
+					
 					cell = row.getCell(4);
 					cell.setCellValue(
 							candidate.getProfile() != null ? candidate.getProfile() : cell.getStringCellValue());
@@ -280,7 +290,11 @@ public class CandidateExcelController {
 				
 				can.setName(currentRow.getCell(1).getStringCellValue());
 				can.setEmail(currentRow.getCell(2).getStringCellValue());
-				can.setPhone(currentRow.getCell(3).getStringCellValue());
+				if (currentRow.getCell(3).getCellTypeEnum() == CellType.NUMERIC) {
+					can.setPhone(currentRow.getCell(3).getNumericCellValue()+"");
+				}else if(currentRow.getCell(3).getCellTypeEnum() == CellType.STRING) {
+					can.setPhone(currentRow.getCell(3).getStringCellValue());
+				}
 				can.setProfile(currentRow.getCell(4).getStringCellValue());
 				can.setYearsOfExperience((int) currentRow.getCell(5).getNumericCellValue());
 				can.setEnglishLevel(currentRow.getCell(6).getStringCellValue());
