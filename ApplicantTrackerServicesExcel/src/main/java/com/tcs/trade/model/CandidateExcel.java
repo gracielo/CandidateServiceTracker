@@ -18,6 +18,16 @@ public class CandidateExcel {
 	private String manager;
 	private boolean relocated;
 	
+	
+	
+	public CandidateExcel() {
+		super();
+	}
+	public CandidateExcel(int candidateId, String name) {
+		super();
+		this.candidateId = candidateId;
+		this.name = name;
+	}
 	public String getName() {
 		return name;
 	}

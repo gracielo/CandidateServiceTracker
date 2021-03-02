@@ -11,7 +11,7 @@ public class Evaluation {
 	private int grade;
 	private Date evaluationDate;
 	private String status;
-	
+	private String evaluationType;
 	
 	
 	public int getEvaluationId() {
@@ -56,6 +56,18 @@ public class Evaluation {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+	public String getEvaluationType() {
+		return evaluationType;
+	}
+	public void setEvaluationType(String evaluationType) {
+		this.evaluationType = evaluationType;
+	}
+	@Override
+	public String toString() {
+		return "Evaluation [evaluationId=" + evaluationId + ", candidateId=" + candidateId + ", evaluatorId="
+				+ evaluatorId + ", feedback=" + feedback + ", grade=" + grade + ", evaluationDate=" + evaluationDate
+				+ ", status=" + status + ", evaluationType=" + evaluationType + "]";
+	}	
 	
 	
 	
